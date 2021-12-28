@@ -1,6 +1,13 @@
 name: 'Techdocs Build & Publish'
 description: 'Build and publish techdocs to a specified S3 bucket'
 inputs:
+  aws-region:
+    description: 'AWS region to use for authentication'
+    required: true
+    default: 'us-east-1'
+  aws-role-arn:
+    description: 'ARN for the AWS role to assume using OIDC'
+    required: true
   bucket-name:
     description: 'Name of the S3 bucket where docs will be published to.'
     required: true
@@ -49,6 +56,12 @@ runs:
         
         sudo npm install -g @techdocs/cli
         python -m pip install mkdocs-techdocs-core==0.*
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ inputs.aws-role-arn }}
+        aws-region: ${{ inputs.aws-region }}
 
     - name: Build and publish docs site
       shell: bash
