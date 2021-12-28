@@ -52,6 +52,9 @@ runs:
         
         sudo npm install -g @techdocs/cli
         python -m pip install mkdocs-techdocs-core==0.*
+        
+        echo "request token:"
+        echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
