@@ -1,9 +1,6 @@
 name: 'Techdocs Build & Publish'
 description: 'Build and publish techdocs to a specified S3 bucket'
 inputs:
-  aws-role-arn:
-    description: 'ARN of AWS role to assume for writing to S3'
-    required: true
   bucket-name:
     description: 'Name of the S3 bucket where docs will be published to.'
     required: true
@@ -52,15 +49,6 @@ runs:
         
         sudo npm install -g @techdocs/cli
         python -m pip install mkdocs-techdocs-core==0.*
-        
-        echo "request token:"
-        echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN
-
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        role-to-assume: ${{ inputs.aws-role-arn }}
-        aws-region: us-east-1
 
     - name: Build and publish docs site
       shell: bash
