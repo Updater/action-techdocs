@@ -9,9 +9,9 @@ inputs:
     required: true
     default: 'updater-techdocs'
   enable-plantuml:
-    description: 'Enable installing plantuml and its dependencies'
+    description: 'Set to the string "true" to install plantuml and its dependencies'
     required: true
-    default: false
+    default: 'false'
   entity-name:
     description: 'Name of Backstage entity the docs correspond to.'
     required: true
@@ -32,6 +32,7 @@ runs:
     
     - name: Populate entity name and kind
       id: entity-info
+      shell: bash
       run: |
         ENTITY_KIND=${{ inputs.entity-kind }}
         ENTITY_NAME=${{ inputs.entity-name }}
@@ -50,11 +51,14 @@ runs:
     - uses: actions/setup-node@v2
     - uses: actions/setup-python@v2
     - uses: actions/setup-java@v2
+      if: inputs.enable-plantuml == "true"
       with:
         distribution: 'zulu'
         java-version: '11'
 
     - name: download, validate, install plantuml and its dependencies
+      if: inputs.enable-plantuml == "true"
+      shell: bash
       run: |
         curl -o plantuml.jar -L http://sourceforge.net/projects/plantuml/files/plantuml.1.2021.4.jar/download
         echo "be498123d20eaea95a94b174d770ef94adfdca18  plantuml.jar" | sha1sum -c -
@@ -65,21 +69,20 @@ runs:
         echo "$HOME/.local/bin" >> $GITHUB_PATH
         sudo apt-get install -y graphviz
 
-      - name: Install techdocs-cli
-        run: sudo npm install -g @techdocs/cli
+    - name: Install techdocs-cli and its dependencies
+      shell: bash
+      run: |
+        sudo npm install -g @techdocs/cli
+        python -m pip install mkdocs-techdocs-core==0.*
 
-      - name: Install mkdocs and mkdocs plugins
-        run: python -m pip install mkdocs-techdocs-core==0.*
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ inputs.aws_role_arn }}
+        aws-region: us-east-1
 
-      - name: Generate docs site
-        run: techdocs-cli generate --no-docker --verbose
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ inputs.aws_role_arn }}
-          aws-region: us-east-1
-
-      - name: Publish docs site
-        run:
-          techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket_name }} --entity ${{ inputs.entity_namespace }}/${{ ${{ steps.entity-info.outputs.entity-kind-output }} }}/${{ steps.entity-info.outputs.entity-name-output }}
+    - name: Build and publish docs site
+      shell: bash
+      run: |
+        techdocs-cli generate --no-docker --verbose
+        techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket_name }} --entity ${{ inputs.entity_namespace }}/${{ ${{ steps.entity-info.outputs.entity-kind-output }} }}/${{ steps.entity-info.outputs.entity-name-output }}
