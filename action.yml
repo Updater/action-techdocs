@@ -33,17 +33,17 @@ runs:
     - name: Populate entity name and kind
       id: entity-info
       run: |
-          ENTITY_KIND=${{ inputs.entity-kind }}
-          ENTITY_NAME=${{ inputs.entity-name }}
+        ENTITY_KIND=${{ inputs.entity-kind }}
+        ENTITY_NAME=${{ inputs.entity-name }}
+        
+        if [ -z "$ENTITY_KIND" ]; then
+          ENTITY_KIND=$(yq eval --no-colors 'select(documentIndex == 0) | .kind' catalog-info.yaml)
+        fi
           
-          if [ -z "$ENTITY_KIND" ]; then
-            ENTITY_KIND=$(yq eval --no-colors 'select(documentIndex == 0) | .kind' catalog-info.yaml)
-          fi
-          
-          if [ -z "$ENTITY_NAME" ]; then
-            ENTITY_NAME=$(yq eval --no-colors 'select(documentIndex == 0) | .metadata.name' catalog-info.yaml)
-          fi
-
+        if [ -z "$ENTITY_NAME" ]; then
+          ENTITY_NAME=$(yq eval --no-colors 'select(documentIndex == 0) | .metadata.name' catalog-info.yaml)
+        fi
+        
         echo "::set-output name=entity-kind-output::${ENTITY_KIND}"
         echo "::set-output name=entity-name-output::${ENTITY_NAME}"
     
