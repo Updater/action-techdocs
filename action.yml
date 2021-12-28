@@ -56,7 +56,7 @@ runs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: ${{ inputs.aws_role_arn }}
+        role-to-assume: ${{ inputs.aws-role-arn }}
         aws-region: us-east-1
 
     - name: Build and publish docs site
@@ -74,4 +74,4 @@ runs:
         fi
         
         techdocs-cli generate --no-docker --verbose
-        techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket_name }} --entity ${{ inputs.entity_namespace }}/${ENTITY_KIND}/${ENTITY_NAME}
+        techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket-name }} --entity ${{ inputs.entity-namespace }}/${ENTITY_KIND}/${ENTITY_NAME}
