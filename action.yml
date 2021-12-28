@@ -29,25 +29,6 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v2
-    
-    - name: Populate entity name and kind
-      id: entity-info
-      shell: bash
-      run: |
-        ENTITY_KIND=${{ inputs.entity-kind }}
-        ENTITY_NAME=${{ inputs.entity-name }}
-        
-        if [ -z "$ENTITY_KIND" ]; then
-          ENTITY_KIND=$(yq eval --no-colors 'select(documentIndex == 0) | .kind' catalog-info.yaml)
-        fi
-          
-        if [ -z "$ENTITY_NAME" ]; then
-          ENTITY_NAME=$(yq eval --no-colors 'select(documentIndex == 0) | .metadata.name' catalog-info.yaml)
-        fi
-        
-        echo "::set-output name=entity-kind-output::${ENTITY_KIND}"
-        echo "::set-output name=entity-name-output::${ENTITY_NAME}"
-    
     - uses: actions/setup-node@v2
     - uses: actions/setup-python@v2
     - uses: actions/setup-java@v2
@@ -81,5 +62,16 @@ runs:
     - name: Build and publish docs site
       shell: bash
       run: |
+        ENTITY_KIND=${{ inputs.entity-kind }}
+        ENTITY_NAME=${{ inputs.entity-name }}
+        
+        if [ -z "$ENTITY_KIND" ]; then
+          ENTITY_KIND=$(yq eval --no-colors 'select(documentIndex == 0) | .kind' catalog-info.yaml)
+        fi
+          
+        if [ -z "$ENTITY_NAME" ]; then
+          ENTITY_NAME=$(yq eval --no-colors 'select(documentIndex == 0) | .metadata.name' catalog-info.yaml)
+        fi
+        
         techdocs-cli generate --no-docker --verbose
-        techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket_name }} --entity ${{ inputs.entity_namespace }}/${{ ${{ steps.entity-info.outputs.entity-kind-output }} }}/${{ steps.entity-info.outputs.entity-name-output }}
+        techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket_name }} --entity ${{ inputs.entity_namespace }}/${ENTITY_KIND}/${ENTITY_NAME}
