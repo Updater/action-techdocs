@@ -39,6 +39,7 @@ runs:
       with:
         distribution: 'zulu'
         java-version: '11'
+    - uses: ruby/setup-ruby@359bebbc29cbe6c87da6bc9ea3bc930432750108
 
     - name: Install techdocs-cli and its dependencies
       shell: bash
@@ -53,9 +54,11 @@ runs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           sudo apt-get install -y graphviz
         fi
-        
+
         sudo npm install -g @techdocs/cli
         python -m pip install mkdocs-techdocs-core==0.*
+
+      run: bundle install --path vendor/bundle
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -68,14 +71,18 @@ runs:
       run: |
         ENTITY_KIND=${{ inputs.entity-kind }}
         ENTITY_NAME=${{ inputs.entity-name }}
-        
+
         if [ -z "$ENTITY_KIND" ]; then
           ENTITY_KIND=$(yq eval --no-colors 'select(documentIndex == 0) | .kind' catalog-info.yaml)
         fi
-          
+
         if [ -z "$ENTITY_NAME" ]; then
           ENTITY_NAME=$(yq eval --no-colors 'select(documentIndex == 0) | .metadata.name' catalog-info.yaml)
         fi
-        
+
         techdocs-cli generate --no-docker --verbose
         techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket-name }} --entity ${{ inputs.entity-namespace }}/${ENTITY_KIND}/${ENTITY_NAME}
+
+      run: |
+        bundle exec rake docs:swagger
+        techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket-name }} --entity ${{ inputs.entity-namespace }}/${ENTITY_KIND}/openapi
