@@ -57,8 +57,7 @@ runs:
 
         sudo npm install -g @techdocs/cli
         python -m pip install mkdocs-techdocs-core==0.*
-
-      run: bundle install --path vendor/bundle
+        bundle install --path vendor/bundle
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -83,6 +82,5 @@ runs:
         techdocs-cli generate --no-docker --verbose
         techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket-name }} --entity ${{ inputs.entity-namespace }}/${ENTITY_KIND}/${ENTITY_NAME}
 
-      run: |
         bundle exec rake docs:swagger
         techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket-name }} --entity ${{ inputs.entity-namespace }}/${ENTITY_KIND}/openapi
