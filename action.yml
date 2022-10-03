@@ -28,6 +28,10 @@ inputs:
     description: 'Namespace of Backstage entity the docs correspond to.'
     required: true
     default: 'default'
+  source-dir:
+    description: 'Source directory containing mkdocs.yml and docs/ directory.'
+    required: true
+    default: '.'
 
 runs:
   using: "composite"
@@ -77,5 +81,5 @@ runs:
           ENTITY_NAME=$(yq eval --no-colors 'select(documentIndex == 0) | .metadata.name' catalog-info.yaml)
         fi
         
-        techdocs-cli generate --no-docker --verbose
+        techdocs-cli generate --no-docker --verbose --source-dir ${{ inputs.source-dir }}
         techdocs-cli publish --publisher-type awsS3 --storage-name ${{ inputs.bucket-name }} --entity ${{ inputs.entity-namespace }}/${ENTITY_KIND}/${ENTITY_NAME}
