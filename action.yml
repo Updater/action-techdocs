@@ -58,7 +58,7 @@ runs:
           sudo apt-get install -y graphviz
         fi
         
-        sudo npm install -g @techdocs/cli mermaid.cli
+        sudo npm install -g @techdocs/cli @mermaid-js/mermaid-cli
         python -m pip install mkdocs-techdocs-core==0.*
         python -m pip install markdown-inline-mermaid==1.*
 
