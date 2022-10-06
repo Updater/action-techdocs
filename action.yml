@@ -60,6 +60,7 @@ runs:
         
         sudo npm install -g @techdocs/cli
         python -m pip install mkdocs-techdocs-core==0.*
+        python -m pip install markdown-inline-mermaid==1.*
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
