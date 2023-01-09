@@ -64,6 +64,8 @@ runs:
     - name: Install techdocs-cli and its dependencies
       shell: bash
       run: |
+        sudo apt upgrade -y
+        sudo apt install chromium-browser -y
         sudo rm -rf /home/runner/.cache/puppeteer
         sudo npm install -f -g @techdocs/cli @mermaid-js/mermaid-cli puppeteer
         python -m pip install mkdocs-techdocs-core==1.*
