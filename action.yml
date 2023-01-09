@@ -64,7 +64,8 @@ runs:
     - name: Install techdocs-cli and its dependencies
       shell: bash
       run: |
-        sudo npm install -g @techdocs/cli @mermaid-js/mermaid-cli
+        sudo rm -rf /home/runner/.cache/puppeteer
+        sudo npm install -f -g @techdocs/cli @mermaid-js/mermaid-cli
         python -m pip install mkdocs-techdocs-core==1.*
         python -m pip install markdown-inline-mermaid==1.*
 
