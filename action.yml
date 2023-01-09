@@ -68,6 +68,7 @@ runs:
         sudo apt install chromium-browser -y
         sudo rm -rf /home/runner/.cache/puppeteer
         sudo npm install -f -g @techdocs/cli @mermaid-js/mermaid-cli puppeteer
+        sudo rm -rf /home/runner/.cache/puppeteer
         python -m pip install mkdocs-techdocs-core==1.*
         python -m pip install markdown-inline-mermaid==1.*
 
