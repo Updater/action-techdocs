@@ -50,7 +50,7 @@ runs:
         java-version: '11'
 
     - name: Install planuml
-      if: ${{ inputs.enable-plantuml == "true" }}
+      if: ${{ inputs.enable-plantuml == 'true' }}
       shell: bash
       run: |
         curl -o plantuml.jar -L http://sourceforge.net/projects/plantuml/files/plantuml.1.2021.4.jar/download
