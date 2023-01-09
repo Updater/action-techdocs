@@ -72,7 +72,7 @@ runs:
     - name: Build and publish docs site
       shell: bash
       run: |
-        techdocs-cli generate --no-docker --verbose --source-dir ${{ inputs.source-dir }}
+        PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium techdocs-cli generate --no-docker --verbose --source-dir ${{ inputs.source-dir }}
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
