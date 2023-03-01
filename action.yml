@@ -66,6 +66,8 @@ runs:
       run: |
         export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=false
         sudo npm install -f -g @techdocs/cli @mermaid-js/mermaid-cli puppeteer
+        python -m pip install mkdocs-awesome-pages-plugin
+        python -m pip install mkdocs-section-index
         python -m pip install mkdocs-techdocs-core==1.*
         python -m pip install markdown-inline-mermaid==1.*
 
